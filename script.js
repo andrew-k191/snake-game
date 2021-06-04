@@ -2,7 +2,7 @@ const canvas = document.getElementById('game-canvas');
 const canvasContext = canvas.getContext('2d');
 
 /* ----- Gameboard ----- */
-function drawGameBoard(color1, color2, boardWidth, boardHeight) {
+function drawGameBoard(color1, color2, color3, boardWidth, boardHeight) {
   canvasContext.fillStyle = color1;
   canvasContext.fillRect(0, 0, canvas.width, canvas.height);
   let alternateRowColorPattern = true;
@@ -21,6 +21,9 @@ function drawGameBoard(color1, color2, boardWidth, boardHeight) {
       alternateRowColorPattern = true;
     }
   }
+  // gameboard border
+  canvasContext.strokeStyle = color3;
+  canvasContext.strokeRect(0, 0, canvas.width, canvas.height);
 }
 
 /* ----- Snake ----- */
@@ -32,7 +35,7 @@ let pixelRate = 1;
 let snakeDirection = '';
 
 let snakeBody = [
-  {x: snakeXPosition, y: snakeYPosition}, // head of snakei 
+  {x: snakeXPosition, y: snakeYPosition}, // head of snake 
   {x: (snakeXPosition - snakeWidth), y: snakeYPosition},
   {x: (snakeXPosition - 2 * snakeWidth), y: snakeYPosition}
   // when new links are created, snakeWidth and snakeHeight determines it's size
@@ -41,46 +44,68 @@ let snakeBody = [
 function drawSnake() {
   canvasContext.strokeStyle = '#000000';
   canvasContext.fillStyle = '#fbb104';
-  for (let link of snakeBody) {
-    canvasContext.fillRect(link.x, link.y, snakeWidth, snakeHeight);
-    canvasContext.strokeRect(link.x, link.y, snakeWidth, snakeHeight);
-  }
+  snakeBody.forEach((snakeLink) => {
+    canvasContext.fillRect(snakeLink.x, snakeLink.y, snakeWidth, snakeHeight);
+    canvasContext.strokeRect(snakeLink.x, snakeLink.y, snakeWidth, snakeHeight);
+  });
 }
 
-function gameAnimation() {
-  canvasContext.clearRect(0, 0, canvas.width, canvas.height);
-  drawGameBoard('#8ed728', '#7128d7', 20, 20);
-
-  canvasContext.strokeStyle = '#000000';
-  canvasContext.fillStyle = '#ffb104';
+function moveSnake() {
   if ((snakeDirection === 'right') || (snakeDirection === 'left')) {
-    for (let link of snakeBody) {
-      canvasContext.fillRect(link.x += pixelRate, link.y, snakeWidth, snakeHeight);
-      canvasContext.strokeRect(link.x += pixelRate, link.y, snakeWidth, snakeHeight);
-    }
+    const newHead = {x: snakeXPosition += pixelRate, y: snakeYPosition};
+    snakeBody.forEach((snakeLink) => {
+      snakeLink.x += (pixelRate - snakeWidth);
+    });
+    snakeBody.unshift(newHead);
+    snakeBody.pop();
   }
   if ((snakeDirection === 'up') || (snakeDirection === 'down')) {
-    for (let link of snakeBody) {
-      canvasContext.fillRect(link.x, link.y += pixelRate, snakeWidth, snakeHeight);
-      canvasContext.strokeRect(link.x, link.y += pixelRate, snakeWidth, snakeHeight);
-    }
+    const newHead = {x: snakeXPosition, y: snakeYPosition += pixelRate};
+    snakeBody.forEach((snakeLink) => {
+      snakeLink.y += (pixelRate - snakeHeight);
+    });
+    snakeBody.unshift(newHead);
+    snakeBody.pop();
   }
 }
+
+
+function drawFrame() {
+  canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+  drawGameBoard('#8ed728', '#7128d7', '#000', 20, 20);
+
+  moveSnake();
+  drawSnake();
+  // canvasContext.strokeStyle = '#000000';
+  // canvasContext.fillStyle = '#ffb104';
+  // if ((snakeDirection === 'right') || (snakeDirection === 'left')) {
+  //   for (let link of snakeBody) {
+  //     canvasContext.fillRect(link.x += pixelRate, link.y, snakeWidth, snakeHeight);
+  //     canvasContext.strokeRect(link.x += pixelRate, link.y, snakeWidth, snakeHeight);
+  //   }
+  // }
+  // if ((snakeDirection === 'up') || (snakeDirection === 'down')) {
+  //   for (let link of snakeBody) {
+  //     canvasContext.fillRect(link.x, link.y += pixelRate, snakeWidth, snakeHeight);
+  //     canvasContext.strokeRect(link.x, link.y += pixelRate, snakeWidth, snakeHeight);
+  //   }
+  // }
+}
 window.addEventListener('load', function() {
-  drawGameBoard('#8ed728', '#7128d7', 20, 20);
+  drawGameBoard('#8ed728', '#7128d7', '#000', 20, 20);
   drawSnake();
   document.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowRight') {
       snakeDirection = 'right';
       setInterval(function() {
-        gameAnimation();
+        drawFrame();
         console.log(e.key);
       }, 1000 / 60);
     };
     if (e.key === 'ArrowUp') {
       snakeDirection = 'up';
       setInterval(function() {
-        gameAnimation();
+        drawFrame();
         console.log(e.key);
       }, 1000 / 60);
     }
