@@ -31,20 +31,19 @@ let snakeXPosition = canvas.width / 2;
 let snakeYPosition = canvas.height / 2;
 const snakeWidth = 20;
 const snakeHeight = 20;
-let pixelRate = 1; 
+let pixelRate = 20; 
 let snakeDirection = '';
 
-let snakeBody = [
-  {x: snakeXPosition, y: snakeYPosition}, // head of snake 
-  {x: (snakeXPosition - snakeWidth), y: snakeYPosition},
-  {x: (snakeXPosition - 2 * snakeWidth), y: snakeYPosition}
-  // when new links are created, snakeWidth and snakeHeight determines it's size
-];
+// generating snake
+let snake = [];
+for (let currentLink = 0; currentLink <= 5; currentLink++) {
+  snake.push({x: snakeXPosition - (currentLink * snakeWidth), y: snakeYPosition});
+}
 
 function drawSnake() {
-  canvasContext.strokeStyle = '#000000';
+  canvasContext.strokeStyle = 'red';
   canvasContext.fillStyle = '#fbb104';
-  snakeBody.forEach((snakeLink) => {
+  snake.forEach((snakeLink) => {
     canvasContext.fillRect(snakeLink.x, snakeLink.y, snakeWidth, snakeHeight);
     canvasContext.strokeRect(snakeLink.x, snakeLink.y, snakeWidth, snakeHeight);
   });
@@ -52,64 +51,73 @@ function drawSnake() {
 
 function moveSnake() {
   if ((snakeDirection === 'right') || (snakeDirection === 'left')) {
-    const newHead = {x: snakeXPosition += pixelRate, y: snakeYPosition};
-    snakeBody.forEach((snakeLink) => {
-      snakeLink.x += (pixelRate - snakeWidth);
-    });
-    snakeBody.unshift(newHead);
-    snakeBody.pop();
+    const newHead = {x: snake[0].x + pixelRate, y: snake[0].y};
+    snake.unshift(newHead);
+    snake.pop();
   }
   if ((snakeDirection === 'up') || (snakeDirection === 'down')) {
-    const newHead = {x: snakeXPosition, y: snakeYPosition += pixelRate};
-    snakeBody.forEach((snakeLink) => {
-      snakeLink.y += (pixelRate - snakeHeight);
-    });
-    snakeBody.unshift(newHead);
-    snakeBody.pop();
+    const newHead = {x: snake[0].x, y: snake[0].y + pixelRate};
+    snake.unshift(newHead);
+    snake.pop();
   }
 }
-
 
 function drawFrame() {
   canvasContext.clearRect(0, 0, canvas.width, canvas.height);
   drawGameBoard('#8ed728', '#7128d7', '#000', 20, 20);
-
   moveSnake();
   drawSnake();
-  // canvasContext.strokeStyle = '#000000';
-  // canvasContext.fillStyle = '#ffb104';
-  // if ((snakeDirection === 'right') || (snakeDirection === 'left')) {
-  //   for (let link of snakeBody) {
-  //     canvasContext.fillRect(link.x += pixelRate, link.y, snakeWidth, snakeHeight);
-  //     canvasContext.strokeRect(link.x += pixelRate, link.y, snakeWidth, snakeHeight);
-  //   }
-  // }
-  // if ((snakeDirection === 'up') || (snakeDirection === 'down')) {
-  //   for (let link of snakeBody) {
-  //     canvasContext.fillRect(link.x, link.y += pixelRate, snakeWidth, snakeHeight);
-  //     canvasContext.strokeRect(link.x, link.y += pixelRate, snakeWidth, snakeHeight);
-  //   }
-  // }
 }
+
+/* ----- Game Controls ----- */
+function gameControls() {
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowRight') {
+      snakeDirection = 'right';
+      pixelRate = Math.abs(pixelRate);
+    }
+    else if (event.key === 'ArrowLeft') {
+      snakeDirection = 'left';
+      pixelRate = -pixelRate;
+    }
+    if (event.key === 'ArrowUp') {
+      snakeDirection = 'up';
+      pixelRate = -pixelRate;
+    }
+    else if (event.key === 'ArrowDown') {
+      snakeDirection = 'down';
+      pixelRate = Math.abs(pixelRate);
+    }
+  });
+}
+
+/* ----- Animation ----- */
+function drawFrame() {
+  canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+  drawGameBoard('#8ed728', '#7128d7', '#000', 20, 20);
+  moveSnake();
+  drawSnake();
+}
+
+const animation = setInterval(drawFrame, 2000);
+let gameOn = true;
+
 window.addEventListener('load', function() {
   drawGameBoard('#8ed728', '#7128d7', '#000', 20, 20);
+  gameControls();
   drawSnake();
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight') {
-      snakeDirection = 'right';
-      setInterval(function() {
-        drawFrame();
-        console.log(e.key);
-      }, 1000 / 60);
-    };
-    if (e.key === 'ArrowUp') {
-      snakeDirection = 'up';
-      setInterval(function() {
-        drawFrame();
-        console.log(e.key);
-      }, 1000 / 60);
-    }
-  })
+  animation;
+  // document.addEventListener('keydown', (e) => {
+  //   // this.clearInterval(animation);
+  //   if (e.key === 'ArrowRight') {
+  //     snakeDirection = 'right';
+  //     animation;
+  //   };
+  //   if (e.key === 'ArrowDown') {
+  //     snakeDirection = 'down';
+  //     animation;
+  //   }
+  // })
 });
 
 
@@ -259,3 +267,12 @@ window.addEventListener('load', function() {
 
 
 
+
+
+
+// let snake = [
+//   {x: snakeXPosition, y: snakeYPosition}, // head of snake 
+//   {x: (snakeXPosition - snakeWidth), y: snakeYPosition},
+//   {x: (snakeXPosition - 2 * snakeWidth), y: snakeYPosition}
+//   // when new links are created, snakeWidth and snakeHeight determines it's size
+// ];
