@@ -1,6 +1,5 @@
 const canvas = document.getElementById('game-canvas');
 const canvasContext = canvas.getContext('2d');
-let gameOn = true;
 
 /* ----- Gameboard ----- */
 class GameBoard {
@@ -91,14 +90,19 @@ class Snake {
 const snake = new Snake();
 snake.generateSnakeBody();
 
+/* ----- Apple ----- */
+
+
+
 /* ----- Game Controls ----- */
 function keyEventHandler(event) {
+  const pausePlay = document.querySelector('[data-play-pause]');
   switch (event.key) {
     case 'ArrowRight':
       snakeDirection = 'right';
       break;
     case 'ArrowLeft':
-      snakeDirection = 'left';     
+      snakeDirection = 'left';  
       break;
     case 'ArrowUp':
       snakeDirection = 'up';
@@ -110,14 +114,63 @@ function keyEventHandler(event) {
       if (gameOn) {
         animation.pause();
         gameOn = false;
+        pausePlay.textContent = 'PAUSED';
       } 
       else {
         animation.resume();
         gameOn = true;
+        pausePlay.textContent = 'PLAYING';
       }
       break;
   }
 };
+
+/* ----- disabling snake moving backwards ----- */
+function disableReverseMotion(event) {
+  switch (snakeDirection) {
+    case null:
+      if (event.key !== 'ArrowLeft') {
+        keyEventHandler(event);
+      }
+      break;
+    case 'right':
+      if (event.key === 'ArrowLeft') {
+        snakeDirection = 'right';
+      } else {
+        keyEventHandler(event);
+      }
+      break;
+    case 'left':
+      if (event.key === 'ArrowRight') {
+        snakeDirection = 'left';
+      } else {
+        keyEventHandler(event);
+      }
+      break;
+    case 'up':
+      if (event.key === 'ArrowDown') {
+        snakeDirection = 'up';
+      } else {
+        keyEventHandler(event);
+      }
+      break;
+    case 'down':
+      if (event.key === 'ArrowUp') {
+        snakeDirection = 'down';
+      } else {
+        keyEventHandler(event);
+      }
+      break;
+  }
+}
+
+// function keyEventHandler(event) {
+//   const eventKey = event.key;
+//   if (eventKey === 'ArrowRight' || eventKey === 'ArrowLeft') {
+
+//   }
+// }
+
 
 // /* ----- Pause/Play ----- */
 class IntervalTimer {
@@ -158,9 +211,10 @@ function drawFrame() {
 /* ----- Animation ----- */
 const animation = new IntervalTimer(drawFrame, 400);
 
+let gameOn = true;
 window.addEventListener('load', function() {
   drawFrame(gameBoard, snake);
-  // document.addEventListener('keydown', keyEventHandler);
+  document.addEventListener('keydown', disableReverseMotion);
 });
 
 
