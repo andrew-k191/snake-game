@@ -51,7 +51,7 @@ class Snake {
     const snakeHeight = 20;
 
     this.generateSnakeBody = function() {
-      for(let currentLink = 0; currentLink < 4; currentLink++) {
+      for(let currentLink = 0; currentLink <= 3; currentLink++) {
         snakeBody.push({x: snakeXPosition - (currentLink * snakeWidth), y: snakeYPosition});
       }
     };
@@ -66,6 +66,7 @@ class Snake {
     };
 
     this.moveSnake = function() {
+      // Make sure there is a least for snake links present at all times
       const snakeSpeed = 20;
       const head = {x: snakeBody[0].x, y: snakeBody[0].y};
       switch (snakeDirection) {
@@ -84,15 +85,28 @@ class Snake {
       }
       snakeBody.unshift(head);
       snakeBody.pop();
-    };
+    }
   }
 }
 const snake = new Snake();
 snake.generateSnakeBody();
 
 /* ----- Apple ----- */
+class Apple {
+  constructor(appleXPosition, appleYPosition) {
+    const appleWidth = 20;
+    const appleHeight = 20;
+    this.appleXPosition = appleXPosition;
+    this.appleYPosition = appleYPosition;
 
-
+    this.drawApple = function () {
+      const appleImg = new Image();
+      appleImg.src = 'images/apple.png';
+      canvasContext.drawImage(appleImg, appleXPosition, appleYPosition, appleWidth, appleHeight);
+    };
+  }
+}
+const apple = new Apple(canvas.width / 2, canvas.height / 2);
 
 /* ----- Game Controls ----- */
 function keyEventHandler(event) {
@@ -164,14 +178,6 @@ function disableReverseMotion(event) {
   }
 }
 
-// function keyEventHandler(event) {
-//   const eventKey = event.key;
-//   if (eventKey === 'ArrowRight' || eventKey === 'ArrowLeft') {
-
-//   }
-// }
-
-
 // /* ----- Pause/Play ----- */
 class IntervalTimer {
   constructor(callback, delay) {
@@ -203,9 +209,11 @@ function drawFrame() {
   canvasContext.clearRect(0, 0, canvas.width, canvas.height);
   gameBoard.checkerBoardPattern();
   gameBoard.gameBoardBorder();
-
+  
   snake.drawSnake();
+  apple.drawApple();
   snake.moveSnake();
+  
 }
 
 /* ----- Animation ----- */
@@ -213,9 +221,37 @@ const animation = new IntervalTimer(drawFrame, 400);
 
 let gameOn = true;
 window.addEventListener('load', function() {
-  drawFrame(gameBoard, snake);
+  drawFrame();
   document.addEventListener('keydown', disableReverseMotion);
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
