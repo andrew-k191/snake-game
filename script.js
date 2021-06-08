@@ -94,21 +94,69 @@ const snake = new Snake();
 snake.generateSnakeBody();
 
 /* ----- Apple ----- */
+let appleConsumed = false;
+let appleXCoordinate = 3 * (canvas.width / 4);
+let appleYCoordinate = canvas.height / 2;
+
 class Apple {
-  constructor(appleXPosition, appleYPosition) {
+  constructor() {
     const appleImg = document.createElement('img');
     appleImg.src = 'images/apple.png';
     const appleWidth = 20;
     const appleHeight = 20;
-    this.appleXPosition = appleXPosition;
-    this.appleYPosition = appleYPosition;
+    
+    this.generateAppleCoordinates = function() {
+      const snakeBodyXCopy = [];
+      const snakeBodyYCopy = [];
+      snakeBody.forEach((snakeBodyLink) => {
+        snakeBodyXCopy.push(snakeBodyLink.x);
+        snakeBodyYCopy.push(snakeBodyLink.y);
+      });
+
+      const xArray = [];
+      for (let coordinate = 0; coordinate < canvas.width; coordinate += 20) {
+        xArray.push(coordinate);
+      }
+      const yArray = [];
+      for (let coordinate = 0; coordinate < canvas.height; coordinate += 20) {
+        yArray.push(coordinate);
+      }
+      // filtering x and y snake coordinates out as possible locations to place apple
+      snakeBodyXCopy.forEach((xValue) => {
+        if (xArray.indexOf(xValue) !== -1) {
+          xArray.splice(xArray.indexOf(xValue), 1);
+        }
+      });
+      snakeBodyYCopy.forEach((yValue) => {
+        if (yArray.indexOf(yValue) !== -1) {
+          yArray.splice(yArray.indexOf(yValue), 1);
+        }
+      });
+      appleXCoordinate = xArray[Math.floor(Math.random() * xArray.length)];
+      appleYCoordinate = yArray[Math.floor(Math.random() * yArray.length)];
+      // const randomXPosition = xArray[Math.floor(Math.random() * xArray.length)];
+      // const randomYPosition = yArray[Math.floor(Math.random() * yArray.length)];
+
+    };
     
     this.drawApple = function() {
-      canvasContext.drawImage(appleImg, appleXPosition, appleYPosition, appleWidth, appleHeight);
-    };
-  }
+      if (appleConsumed) {
+        // apple's x and y coordinates are allowed to change
+        this.generateAppleCoordinates();
+        canvasContext.drawImage(appleImg, appleXCoordinate, appleYCoordinate, appleWidth, appleHeight);
+        appleConsumed = false;
+      } else {
+        // apple's x and y coordinates are to remain the same
+        canvasContext.drawImage(appleImg, appleXCoordinate, appleYCoordinate, appleWidth, appleHeight);
+      }
+    }
+
+    this.appleConsumed = function() {
+      // when apple is consumed by snake
+    }
+  };
 }
-const apple = new Apple(canvas.width / 2, canvas.height / 4);
+const apple = new Apple();
 
 /* ----- Game Controls ----- */
 function keyEventHandler(event) {
@@ -206,14 +254,37 @@ class IntervalTimer {
   }
 }
 
+
+const DEBUGG = false;
+// function randomizeApplePlacement() {
+//   const appleImg = document.createElement('img');
+//   appleImg.src = 'images/apple.png';
+//   // generate an array starting at zero and ending at 800
+//   const xArray = [];
+//   for (let coordinate = 0; coordinate < canvas.width; coordinate += 20) {
+//     xArray.push(coordinate);
+//   }
+//   const yArray = [];
+//   for (let coordinate = 0; coordinate < canvas.height; coordinate += 20) {
+//     yArray.push(coordinate);
+//   }
+//   const randomXPosition = xArray[Math.floor(Math.random() * xArray.length)];
+//   const randomYPosition = yArray[Math.floor(Math.random() * yArray.length)];
+  
+//   canvasContext.drawImage(appleImg, randomXPosition, randomYPosition, 20, 20);
+//   console.log(randomXPosition);
+//   console.log(randomYPosition);
+// }
+
+
 /* ----- game at each frame ----- */
 function drawFrame() {
   canvasContext.clearRect(0, 0, canvas.width, canvas.height);
   gameBoard.checkerBoardPattern();
   gameBoard.gameBoardBorder();
   
-  snake.drawSnake();
   apple.drawApple();
+  snake.drawSnake();
   snake.moveSnake();
 }
 
@@ -230,13 +301,47 @@ window.addEventListener('load', function() {
 });
 
 
+// if (DEBUGG) {
+//   drawApple();
+// }
 
+// function drawApple() {
+//   const snakeBodyXCopy = [];
+//   const snakeBodyYCopy = [];
+//   snakeBody.forEach((snakeBodyLink) => {
+//     snakeBodyXCopy.push(snakeBodyLink.x);
+//     snakeBodyYCopy.push(snakeBodyLink.y);
+//   });
 
-
-
-
-
-
+//   const xArray = [];
+//   for (let coordinate = 0; coordinate < canvas.width; coordinate += 20) {
+//     xArray.push(coordinate);
+//   }
+//   const yArray = [];
+//   for (let coordinate = 0; coordinate < canvas.height; coordinate += 20) {
+//     yArray.push(coordinate);
+//   }
+//   // filtering x and y snake coordinates out as possible locations to place apple
+//   snakeBodyXCopy.forEach((xValue) => {
+//     if (xArray.indexOf(xValue) !== -1) {
+//       xArray.splice(xArray.indexOf(xValue), 1);
+//     }
+//   });
+//   snakeBodyYCopy.forEach((yValue) => {
+//     if (yArray.indexOf(yValue) !== -1) {
+//       yArray.splice(yArray.indexOf(yValue), 1);
+//     }
+//   })
+//   const randomXPosition = xArray[Math.floor(Math.random() * xArray.length)];
+//   const randomYPosition = yArray[Math.floor(Math.random() * yArray.length)];
+//   // canvasContext.drawImage(appleImg, randomXPosition, randomYPosition, appleWidth, appleHeight);
+//   console.log(randomXPosition);
+//   console.log(randomYPosition);
+//   // console.log(xArray);
+//   // console.log(yArray);
+//   // console.log(snakeBodyXCopy);
+//   // console.log(snakeBodyYCopy);
+// }
 
 
 
