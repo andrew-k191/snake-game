@@ -41,6 +41,7 @@ const gameBoard = new GameBoard('#8ed728', '#7128d7', '#000', 20, 20);
 
 /* ----- Snake ----- */
 let snakeDirection = null;
+let snakeMovementPermitted = false;
 let snakeBody = [];
 
 class Snake {
@@ -66,25 +67,26 @@ class Snake {
     };
 
     this.moveSnake = function() {
-      // Make sure there is a least for snake links present at all times
-      const snakeSpeed = 20;
-      const head = {x: snakeBody[0].x, y: snakeBody[0].y};
-      switch (snakeDirection) {
-        case 'right':
-          head.x += snakeSpeed;
-          break;
-        case 'left':
-          head.x -= snakeSpeed;
-          break;
-        case 'up':
-          head.y -= snakeSpeed;
-          break;
-        case 'down':
-          head.y += snakeSpeed;
-          break;
+      if (snakeMovementPermitted) {
+        const snakeSpeed = 20;
+        const head = {x: snakeBody[0].x, y: snakeBody[0].y};
+        switch (snakeDirection) {
+          case 'right':
+            head.x += snakeSpeed;
+            break;
+          case 'left':
+            head.x -= snakeSpeed;
+            break;
+          case 'up':
+            head.y -= snakeSpeed;
+            break;
+          case 'down':
+            head.y += snakeSpeed;
+            break;
+        }
+        snakeBody.unshift(head);
+        snakeBody.pop();
       }
-      snakeBody.unshift(head);
-      snakeBody.pop();
     }
   }
 }
@@ -94,19 +96,19 @@ snake.generateSnakeBody();
 /* ----- Apple ----- */
 class Apple {
   constructor(appleXPosition, appleYPosition) {
+    const appleImg = document.createElement('img');
+    appleImg.src = 'images/apple.png';
     const appleWidth = 20;
     const appleHeight = 20;
     this.appleXPosition = appleXPosition;
     this.appleYPosition = appleYPosition;
-
-    this.drawApple = function () {
-      const appleImg = new Image();
-      appleImg.src = 'images/apple.png';
+    
+    this.drawApple = function() {
       canvasContext.drawImage(appleImg, appleXPosition, appleYPosition, appleWidth, appleHeight);
     };
   }
 }
-const apple = new Apple(canvas.width / 2, canvas.height / 2);
+const apple = new Apple(canvas.width / 2, canvas.height / 4);
 
 /* ----- Game Controls ----- */
 function keyEventHandler(event) {
@@ -213,7 +215,6 @@ function drawFrame() {
   snake.drawSnake();
   apple.drawApple();
   snake.moveSnake();
-  
 }
 
 /* ----- Animation ----- */
@@ -222,7 +223,10 @@ const animation = new IntervalTimer(drawFrame, 400);
 let gameOn = true;
 window.addEventListener('load', function() {
   drawFrame();
-  document.addEventListener('keydown', disableReverseMotion);
+  document.addEventListener('keydown', function(e) {
+    snakeMovementPermitted = true;
+    disableReverseMotion(e);
+  });
 });
 
 
