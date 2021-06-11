@@ -2,7 +2,7 @@
 
 *A fun and interactive snake application written in pure HTML, CSS, and vanilla JavaScript*
 
-Check it out <a href="">here!!!</a>
+Check it out <a href="https://andrew-k191.github.io/snake-game/">here!!!</a>
 
 <img src="images/snake_game_screenshot.png" alt="snake-game app">
 
@@ -14,7 +14,6 @@ A few of these would be:
 * pause/play feature
 * improved snake graphics/appearance
 * sound effects
-
 
 
 ## Author
