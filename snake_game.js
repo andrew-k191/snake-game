@@ -10,20 +10,23 @@ class GameBoard {
     this.boardWidth = 20;
     this.boardHeight = 20;
 
-    this.checkeredPattern = function() {
+    this.checkeredPattern = function () {
       canvasContext.fillStyle = this.color1;
       canvasContext.fillRect(0, 0, canvas.width, canvas.height);
       let alternateRowColorPattern = true;
       for (let y = 0; y < canvas.height; y += this.boardHeight) {
         if (alternateRowColorPattern) {
-          for (let x = 0; x < canvas.width; x += (2 * this.boardWidth)) {
+          for (let x = 0; x < canvas.width; x += 2 * this.boardWidth) {
             canvasContext.fillStyle = this.color2;
             canvasContext.fillRect(x, y, this.boardWidth, this.boardHeight);
           }
           alternateRowColorPattern = false;
-        } 
-        else {
-          for (let x = this.boardWidth; x < canvas.width; x += (2 * this.boardWidth)) {
+        } else {
+          for (
+            let x = this.boardWidth;
+            x < canvas.width;
+            x += 2 * this.boardWidth
+          ) {
             canvasContext.fillStyle = this.color2;
             canvasContext.fillRect(x, y, this.boardWidth, this.boardHeight);
           }
@@ -32,7 +35,7 @@ class GameBoard {
       }
     };
 
-    this.border = function() {
+    this.border = function () {
       canvasContext.lineWidth = 3;
       canvasContext.strokeStyle = this.color3;
       canvasContext.strokeRect(0, 0, canvas.width, canvas.height);
@@ -53,54 +56,79 @@ class Snake {
     this.snakeWidth = 20;
     this.snakeHeight = 20;
 
-    this.createBody = function() {
+    this.createBody = function () {
       for (let index = 0; index <= 3; index++) {
-        snakeBody.push({x: this.snakeXPosition - (index * this.snakeWidth), y: this.snakeYPosition});
+        snakeBody.push({
+          x: this.snakeXPosition - index * this.snakeWidth,
+          y: this.snakeYPosition,
+        });
       }
     };
 
-    this.face = function() {
-      const head = {x: snakeBody[0].x, y: snakeBody[0].y};
+    this.face = function () {
+      const head = { x: snakeBody[0].x, y: snakeBody[0].y };
       canvasContext.lineWidth = 1;
       // snake mouth
       canvasContext.beginPath();
       canvasContext.strokeStyle = '#000';
-      canvasContext.moveTo(head.x + (this.snakeWidth / 2), head.y + (this.snakeHeight / 2));
-      canvasContext.lineTo(head.x + (this.snakeWidth), head.y + (this.snakeHeight / 2));
+      canvasContext.moveTo(
+        head.x + this.snakeWidth / 2,
+        head.y + this.snakeHeight / 2
+      );
+      canvasContext.lineTo(
+        head.x + this.snakeWidth,
+        head.y + this.snakeHeight / 2
+      );
       canvasContext.stroke();
-      
+
       canvasContext.beginPath();
       canvasContext.strokeStyle = '#000';
-      canvasContext.moveTo(head.x + (this.snakeWidth / 2), head.y + (this.snakeHeight / 3));
-      canvasContext.lineTo(head.x + (this.snakeWidth / 2), head.y + (2 * this.snakeHeight / 3));
+      canvasContext.moveTo(
+        head.x + this.snakeWidth / 2,
+        head.y + this.snakeHeight / 3
+      );
+      canvasContext.lineTo(
+        head.x + this.snakeWidth / 2,
+        head.y + (2 * this.snakeHeight) / 3
+      );
       canvasContext.stroke();
       // snake eye
       canvasContext.lineWidth = 2;
       canvasContext.beginPath();
       canvasContext.strokeStyle = '#000';
-      canvasContext.moveTo(head.x + (3 * this.snakeWidth / 4), head.y + (3));
-      canvasContext.lineTo(head.x + (3 * this.snakeWidth / 4), head.y + (5));
+      canvasContext.moveTo(head.x + (3 * this.snakeWidth) / 4, head.y + 3);
+      canvasContext.lineTo(head.x + (3 * this.snakeWidth) / 4, head.y + 5);
       canvasContext.stroke();
-    }
+    };
 
-    this.draw = function() {
+    this.draw = function () {
       canvasContext.lineWidth = 2;
       canvasContext.strokeStyle = '#005bff';
       canvasContext.fillStyle = '#337cff';
       snakeBody.forEach((link) => {
-        canvasContext.fillRect(link.x, link.y, this.snakeWidth, this.snakeHeight);
-        canvasContext.strokeRect(link.x, link.y, this.snakeWidth, this.snakeHeight);
+        canvasContext.fillRect(
+          link.x,
+          link.y,
+          this.snakeWidth,
+          this.snakeHeight
+        );
+        canvasContext.strokeRect(
+          link.x,
+          link.y,
+          this.snakeWidth,
+          this.snakeHeight
+        );
       });
       this.face();
     };
 
-    this.move = function() {
+    this.move = function () {
       if (snakeMovementAllowed) {
         const status = document.querySelector('.status');
-        status.classList.add('playing')
+        status.classList.add('playing');
         status.textContent = 'PLAYING';
         const speed = 20;
-        const head = {x: snakeBody[0].x, y: snakeBody[0].y};
+        const head = { x: snakeBody[0].x, y: snakeBody[0].y };
         switch (snakeDirection) {
           case 'right':
             head.x += speed;
@@ -138,7 +166,7 @@ class Food {
     this.foodWidth = 20;
     this.foodHeight = 20;
 
-    this.foodLocation = function() {
+    this.foodLocation = function () {
       const snakeBodyX = [];
       const snakeBodyY = [];
       snakeBody.forEach((link) => {
@@ -151,7 +179,11 @@ class Food {
         xCoordinateArray.push(xCoordinate);
       }
       const yCoordinateArray = [];
-      for (let yCoordinate = 0; yCoordinate < canvas.height; yCoordinate += 20) {
+      for (
+        let yCoordinate = 0;
+        yCoordinate < canvas.height;
+        yCoordinate += 20
+      ) {
         yCoordinateArray.push(yCoordinate);
       }
 
@@ -166,31 +198,46 @@ class Food {
           yCoordinateArray.splice(yCoordinateArray.indexOf(yValue), 1);
         }
       });
-      foodXCoordinate = xCoordinateArray[Math.floor(Math.random() * xCoordinateArray.length)];
-      foodYCoordinate = yCoordinateArray[Math.floor(Math.random() * yCoordinateArray.length)];
+      foodXCoordinate =
+        xCoordinateArray[Math.floor(Math.random() * xCoordinateArray.length)];
+      foodYCoordinate =
+        yCoordinateArray[Math.floor(Math.random() * yCoordinateArray.length)];
     };
 
-    this.draw = function() {
+    this.draw = function () {
       if (foodConsumed) {
         // food move to different random location
         this.foodLocation();
-        canvasContext.drawImage(apple, foodXCoordinate, foodYCoordinate, this.foodWidth, this.foodHeight);
-      } 
-      else {
+        canvasContext.drawImage(
+          apple,
+          foodXCoordinate,
+          foodYCoordinate,
+          this.foodWidth,
+          this.foodHeight
+        );
+      } else {
         // food stays in current location
-        canvasContext.drawImage(apple, foodXCoordinate, foodYCoordinate, this.foodWidth, this.foodHeight);
+        canvasContext.drawImage(
+          apple,
+          foodXCoordinate,
+          foodYCoordinate,
+          this.foodWidth,
+          this.foodHeight
+        );
       }
     };
 
-    this.checkFood = function() {
-      if ((snakeBody[0].x === foodXCoordinate) && (snakeBody[0].y === foodYCoordinate)) {
+    this.checkFood = function () {
+      if (
+        snakeBody[0].x === foodXCoordinate &&
+        snakeBody[0].y === foodYCoordinate
+      ) {
         const gameScore = document.querySelector('.game-score');
         foodConsumed = true;
         score++;
         gameScore.textContent = score;
         this.draw();
-      }
-      else {
+      } else {
         this.draw();
       }
     };
@@ -227,32 +274,28 @@ function snakeMotion(event) {
     case 'right':
       if (event.key === 'ArrowLeft') {
         snakeDirection = 'right';
-      }
-      else {
+      } else {
         keyEventHandler(event);
       }
       break;
     case 'left':
       if (event.key === 'ArrowRight') {
         snakeDirection = 'left';
-      } 
-      else {
+      } else {
         keyEventHandler(event);
       }
       break;
     case 'up':
       if (event.key === 'ArrowDown') {
         snakeDirection = 'up';
-      }
-      else {
+      } else {
         keyEventHandler(event);
       }
       break;
     case 'down':
       if (event.key === 'ArrowUp') {
         snakeDirection = 'down';
-      }
-      else {
+      } else {
         keyEventHandler(event);
       }
       break;
@@ -270,7 +313,7 @@ function checkIfSnakeTouchesItself() {
       remainingSnakeBody.push([snakeBody[link].x, snakeBody[link].y]);
     }
     remainingSnakeBody.forEach((link) => {
-      if ((link[0] === snakeHead[0]) && (link[1] === snakeHead[1])) {
+      if (link[0] === snakeHead[0] && link[1] === snakeHead[1]) {
         snakeTouchesItself = true;
       }
     });
@@ -286,12 +329,12 @@ function checkIfSnakeTouchesItself() {
 function checkIfSnakeHitsWall() {
   const snakeHead = [snakeBody[0].x, snakeBody[0].y];
   const status = document.querySelector('.status');
-  if ((snakeHead[0] < 0) || (snakeHead[0] >= canvas.width)) {
+  if (snakeHead[0] < 0 || snakeHead[0] >= canvas.width) {
     status.classList.add('game-over');
     status.textContent = 'GAME OVER!!';
     clearInterval(animation);
   }
-  if ((snakeHead[1] < 0) || (snakeHead[1] >= canvas.height)) {
+  if (snakeHead[1] < 0 || snakeHead[1] >= canvas.height) {
     status.classList.add('game-over');
     status.textContent = 'GAME OVER!!';
     clearInterval(animation);
@@ -322,7 +365,7 @@ function snakeGame() {
 const animation = setInterval(snakeGame, 125);
 
 let score = 0;
-window.addEventListener('load', function() {
+window.addEventListener('load', function () {
   snakeGame();
   document.addEventListener('keydown', snakeMotion);
 });

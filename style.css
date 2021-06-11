@@ -13,13 +13,15 @@ body {
   color: #bb44aa;
 }
 
-.score-board, .game-status {
+.score-board,
+.game-status {
   font-size: 20px;
   font-family: 'Mate SC', serif;
   color: #bb44aa;
 }
 
-.game-score, .status {
+.game-score,
+.status {
   font-size: 20px;
   font-family: 'Sigmar One', cursive;
 }
@@ -38,4 +40,4 @@ body {
 
 .game-over {
   color: #eb1b14;
-} 
+}
