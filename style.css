@@ -1,8 +1,11 @@
 /* Sigmar One font  */
 @import url('https://fonts.googleapis.com/css2?family=Sigmar+One&display=swap');
+/* Mate SC font */
+@import url('https://fonts.googleapis.com/css2?family=Mate+SC&display=swap');
 
 body {
   text-align: center;
+  background-color: #06292d;
 }
 
 .heading {
@@ -10,4 +13,29 @@ body {
   color: #bb44aa;
 }
 
+.score-board, .game-status {
+  font-size: 20px;
+  font-family: 'Mate SC', serif;
+  color: #bb44aa;
+}
 
+.game-score, .status {
+  font-size: 20px;
+  font-family: 'Sigmar One', cursive;
+}
+
+.game-score {
+  color: #eb1b14;
+}
+
+.ready {
+  color: #fbb804;
+}
+
+.playing {
+  color: #00ff13;
+}
+
+.game-over {
+  color: #eb1b14;
+} 
