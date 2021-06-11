@@ -362,7 +362,7 @@ function snakeGame() {
 }
 
 /* ----- Animation ----- */
-const animation = setInterval(snakeGame, 125);
+const animation = setInterval(snakeGame, 175);
 
 let score = 0;
 window.addEventListener('load', function () {
