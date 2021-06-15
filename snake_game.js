@@ -1,7 +1,15 @@
 const canvas = document.querySelector('#game-canvas');
 const canvasContext = canvas.getContext('2d');
 
-/* ----- GameBoard ----- */
+let snakeDirection = null;
+let snakeMovementAllowed = false;
+let snakeBody = [];
+let foodConsumed = false;
+let foodXCoordinate = 3 * (canvas.width / 4);
+let foodYCoordinate = canvas.height / 2;
+let score = 0;
+
+
 class GameBoard {
   constructor() {
     this.color1 = '#87c23d';
@@ -42,12 +50,6 @@ class GameBoard {
     };
   }
 }
-const gameBoard = new GameBoard();
-
-/* ----- Snake ----- */
-let snakeDirection = null;
-let snakeMovementAllowed = false;
-let snakeBody = [];
 
 class Snake {
   constructor() {
@@ -68,7 +70,7 @@ class Snake {
     this.face = function () {
       const head = { x: snakeBody[0].x, y: snakeBody[0].y };
       canvasContext.lineWidth = 1;
-      // snake mouth
+      
       canvasContext.beginPath();
       canvasContext.strokeStyle = '#000';
       canvasContext.moveTo(
@@ -92,7 +94,7 @@ class Snake {
         head.y + (2 * this.snakeHeight) / 3
       );
       canvasContext.stroke();
-      // snake eye
+      
       canvasContext.lineWidth = 2;
       canvasContext.beginPath();
       canvasContext.strokeStyle = '#000';
@@ -151,13 +153,6 @@ class Snake {
     };
   }
 }
-const snake = new Snake();
-snake.createBody();
-
-/* ----- Food ----- */
-let foodConsumed = false;
-let foodXCoordinate = 3 * (canvas.width / 4);
-let foodYCoordinate = canvas.height / 2;
 
 class Food {
   constructor() {
@@ -186,8 +181,7 @@ class Food {
       ) {
         yCoordinateArray.push(yCoordinate);
       }
-
-      // filtering out x and y snake coordinates as possible locations to place food
+      
       snakeBodyX.forEach((xValue) => {
         if (xCoordinateArray.indexOf(xValue) !== -1) {
           xCoordinateArray.splice(xCoordinateArray.indexOf(xValue), 1);
@@ -206,7 +200,6 @@ class Food {
 
     this.draw = function () {
       if (foodConsumed) {
-        // food move to different random location
         this.foodLocation();
         canvasContext.drawImage(
           apple,
@@ -216,7 +209,6 @@ class Food {
           this.foodHeight
         );
       } else {
-        // food stays in current location
         canvasContext.drawImage(
           apple,
           foodXCoordinate,
@@ -243,9 +235,8 @@ class Food {
     };
   }
 }
-const food = new Food();
 
-/* ----- Game Controls ----- */
+
 function keyEventHandler(event) {
   switch (event.key) {
     case 'ArrowRight':
@@ -302,10 +293,8 @@ function snakeMotion(event) {
   }
 }
 
-/* ----- Game Over Scenarios ----- */
 function checkIfSnakeTouchesItself() {
   if (snakeBody.length >= 5) {
-    // snake needs to be at minimum 5 links long before it can touch itself
     const snakeHead = [snakeBody[0].x, snakeBody[0].y];
     const remainingSnakeBody = [];
     let snakeTouchesItself = false;
@@ -341,7 +330,6 @@ function checkIfSnakeHitsWall() {
   }
 }
 
-/* ----- frame by frame snapshot of game ----- */
 function drawFrame() {
   canvasContext.clearRect(0, 0, canvas.width, canvas.height);
   gameBoard.checkeredPattern();
@@ -351,7 +339,6 @@ function drawFrame() {
   snake.draw();
 }
 
-/* ----- Snake Game ----- */
 function snakeGame() {
   drawFrame();
   checkIfSnakeTouchesItself();
@@ -361,10 +348,12 @@ function snakeGame() {
   }
 }
 
-/* ----- Animation ----- */
+const gameBoard = new GameBoard();
+const snake = new Snake();
+snake.createBody();
+const food = new Food();
 const animation = setInterval(snakeGame, 175);
 
-let score = 0;
 window.addEventListener('load', function () {
   snakeGame();
   document.addEventListener('keydown', snakeMotion);
