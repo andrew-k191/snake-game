@@ -18,4 +18,4 @@ A few of these would be:
 
 ## Author
 
-* **Andrew Knight** - *Aspiring Software Developer* - (Website)|(LinkeIn)
+* **Andrew Knight** - *Software Developer* - (Website)|(LinkeIn)
